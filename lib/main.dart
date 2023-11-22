@@ -5,21 +5,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:time_guard/screens/splash_screen.dart';
+import 'package:time_guard/screens/onboarding/splash_screen.dart';
 import 'package:time_guard/shared/constants.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
-    MultiProvider(
-      providers: const [],
-      child: DevicePreview(
-        enabled: !kReleaseMode,
-        builder: (context) => const TimeGuard(),
-      ),
-      // child: const TimeGuard()
-    )
+    const TimeGuard()
+    // MultiProvider(
+    //   providers: const [],
+    //   child: DevicePreview(
+    //     enabled: !kReleaseMode,
+    //     builder: (context) => const TimeGuard(),
+    //   ),
+    //   // child: const TimeGuard()
+    // )
   );
 }
 

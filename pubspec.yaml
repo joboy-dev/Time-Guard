@@ -9,6 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  custom_pin_screen: "^0.3.0"
   device_apps: ^2.2.0
   device_preview: ^1.1.0
   flutter_animate: ^4.2.0+1
@@ -34,6 +35,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   isar_generator: ^3.1.0+1
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  generate: true
+  android: true
+  ios: true
+  image_path: assets/images/appicon.png
 
 flutter:
   uses-material-design: true
@@ -41,14 +49,12 @@ flutter:
   assets:
     - assets/images/
 
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Fredoka
+      fonts:
+        - asset: assets/fonts/Fredoka-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+
+
+  # flutter pub run flutter_launcher_icons:main

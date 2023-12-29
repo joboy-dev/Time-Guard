@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:time_guard/screens/onboarding/get_started_screen.dart';
+import 'package:time_guard/screens/wrapper.dart';
 import 'package:time_guard/shared/constants.dart';
 import 'package:time_guard/shared/utils/navigator.dart';
 
@@ -19,7 +19,7 @@ class SplashScreen extends StatelessWidget {
           width: 200.w,
         ).animate(
           onComplete: (controller) {
-            navigatorPushReplacement(context, const GetStartedScreen());
+            navigatorPushReplacement(context, const Wrapper());
           },
         )
         .fadeIn(curve: Curves.ease, duration: kDurationSecs(3), begin: 0)

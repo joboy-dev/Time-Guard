@@ -25,3 +25,27 @@ class _BaseScreenState extends State<BaseScreen> {
     );
   }
 }
+
+
+class BaseScreenUnscrollable extends StatefulWidget {
+  const BaseScreenUnscrollable({super.key, required this.screen});
+
+  final Widget screen;
+
+  @override
+  State<BaseScreenUnscrollable> createState() => _BaseScreenUnscrollableState();
+}
+
+class _BaseScreenUnscrollableState extends State<BaseScreenUnscrollable> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: kAppPadding(),
+          child: widget.screen
+        ),
+      ),
+    );
+  }
+}

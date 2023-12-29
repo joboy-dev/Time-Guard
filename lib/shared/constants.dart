@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:time_guard/services/provider/theme_provider.dart';
+import 'package:time_guard/shared/utils/logger.dart';
 
 const kFontFamily = 'Fredoka';
 
@@ -14,10 +16,25 @@ const kRedColor = Color.fromARGB(255, 206, 15, 15);
 Color kScaffoldBgColor(BuildContext context) => Theme.of(context).scaffoldBackgroundColor;
 
 // THEME BASED FONT COLOR
-// Color kTextColor(BuildContext context) {
-//   final darkMode = context.watch<ThemeSwitch>().isDarkMode;
-//   return darkMode ? kTertiaryColor : kPrimaryColor;
-// }
+Color kTextColor(BuildContext context) {
+  final theme = context.read<ThemeProvider>().themeValue;
+  // final theme = Provider.of<ThemeProvider>(context, listen: false).themeValue;
+  logger(theme);
+  if (theme == 'dark') {
+    return kSecondaryColor;
+  } else if (theme == 'light') {
+    return kTertiaryColor;
+  } 
+  // System Theme
+  else {
+    // Check the scaffold background color to determins which colors to render
+    if (kScaffoldBgColor(context) == kBgColorDark) {
+      return kSecondaryColor;
+    } else {
+      return kTertiaryColor;
+    }
+  }
+}
 
 // RESPONSIVENESS
 Size kHeightWidth(BuildContext context) {
@@ -35,6 +52,6 @@ TextStyle kAppbarTextStyle() => const TextStyle(fontWeight: FontWeight.bold, fon
 TextStyle kNavbarTextStyle() => TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold, fontFamily:  kFontFamily);
 
 TextStyle kTextFieldTextStyle() => TextStyle(fontSize: 15.sp, color: kSecondaryColor, fontFamily: kFontFamily);
-TextStyle kNormalTextStyle(BuildContext context) => TextStyle(fontSize: 15.sp, color: kTertiaryColor, fontFamily: kFontFamily);
+TextStyle kNormalTextStyle(BuildContext context) => TextStyle(fontSize: 15.sp, color: kTextColor(context), fontFamily: kFontFamily);
 // TextStyle kThemeNormalTextStyle(BuildContext context) => TextStyle(fontSize: 15.sp, color: kTertiaryColor, fontFamily: kFontFamily);
 TextStyle kSecondaryNormalTextStyle(BuildContext context) => TextStyle(fontSize: 15.sp, color: kPrimaryColor, fontFamily: kFontFamily);

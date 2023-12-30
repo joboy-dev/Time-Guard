@@ -6,8 +6,11 @@ import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:time_guard/models/app_model.dart';
+import 'package:time_guard/models/records_model.dart';
 import 'package:time_guard/services/provider/app_provider.dart';
+import 'package:time_guard/services/provider/record_provider.dart';
 import 'package:time_guard/shared/utils/logger.dart';
+import 'package:time_guard/shared/utils/usage_stats.dart';
 
 class IsarDB {
    late Future<Isar> db;
@@ -25,13 +28,16 @@ class IsarDB {
       final dir = await getApplicationDocumentsDirectory();
       // open isar db
       await Isar.open(
-        [AppSchema],
+        [AppSchema, RecordSchema],
         directory: dir.path,
         inspector: true,
       );
     }
     return Future.value(Isar.getInstance());
   }
+
+
+  // -------------------- APP SCHEMA --------------------------
 
 
   /// Function to clear all data from thisar db and provider
@@ -58,7 +64,10 @@ class IsarDB {
         versionName: app.versionName!, 
         appIcon: app is ApplicationWithIcon ? app.icon.toString() : null,
         isTracked: false,
-        timeLimit: '0h 0m',
+        timeUsedOnApp: '0h 0m',
+        usageLimit: '0h 0m',
+        timeUsedOnAppInSeconds: 0,
+        usageLimitInSeconds: 0,
       );
 
       isar.writeTxnSync<int>(() => isar.apps.putSync(newApp));
@@ -172,13 +181,65 @@ class IsarDB {
   }
 
 
+  /// Function to update the time used on an application
+  Future updateTimeUsedOnApp(App app, String timeUsed, int timeUsedInSeconds) async {
+    final isar = await db;
+
+    await isar.writeTxn(() async {
+      app.timeUsedOnApp = timeUsed;
+      app.timeUsedOnAppInSeconds = timeUsedInSeconds;
+      await isar.apps.put(app);
+    });
+
+  }
+
+
+  /// Function to update the useage limit for an application
+  Future updateUsageLimit(App app, String usageLimit, int usageLimitInSeconds) async {
+    final isar = await db;
+
+    await isar.writeTxn(() async {
+      app.usageLimit = usageLimit;
+      app.usageLimitInSeconds = usageLimitInSeconds;
+      await isar.apps.put(app);
+    });
+  }
+
+
   /// Function to reload data
   Future reloadData(BuildContext context) async {
-    // Remove all apps from provider
+    // Remove all apps and records from provider
     context.read<AppProvider>().clear();
+    context.read<RecordProvider>().clear();
 
     await getAllApps(context);
     await getAllTrackedApps(context);
     await getAllUntrackedApps(context);
   }
+
+
+  // -------------------- RECORD SCHEMA --------------------------
+  
+  /// Function to add all installed apps to isar db and provider
+  Future addRecord(BuildContext context) async {
+    final isar = await db;
+
+    Map usageData = await loadUsageData(context);
+    List usedAppsData = usageData['usedAppsData'];
+    final currentDate = DateTime.now();
+    Record? record;
+
+    if (currentDate.hour >= 0 && currentDate.hour <= 3) {
+      record = Record(
+        date: '${currentDate.day}.${currentDate.month}.${currentDate.year}', 
+        noOfAppsUsed: usedAppsData.length, 
+        mostUsedApp: 'mostUsedApp', 
+        timeForMostUsedApp: 'timeForMostUsedApp', 
+        timeForMostUsedAppInSeconds: 1,
+      );
+    }
+
+    isar.writeTxnSync(() => isar.records.putSync(record!));
+  }  
+
 }

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:time_guard/screens/applications/records_screen.dart';
 import 'package:time_guard/screens/main/home_screen.dart';
 import 'package:time_guard/screens/main/settings_screen.dart';
 import 'package:time_guard/shared/constants.dart';
+import 'package:time_guard/shared/utils/navigator.dart';
 import 'package:time_guard/shared/widgets/custom_appbar.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -36,17 +38,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
       textStyle: kNavbarTextStyle(),
     ),
 
-    // PersistentBottomNavBarItem(
-    //   icon: Icon(Icons.qr_code_scanner_rounded, size: 30.sp),
-    //   inactiveIcon: Icon(Icons.qr_code_scanner_rounded, size: 25.sp),
-    //   title: 'Scan',
-    //   activeColorPrimary: kFourthColor,
-    //   activeColorSecondary: kFourthColor,
-    //   inactiveColorPrimary: kFourthColor.withOpacity(0.5),
-    //   inactiveColorSecondary: kFourthColor.withOpacity(0.5),
-    //   textStyle: kNavbarTextStyle(),
-    // ),
-
     PersistentBottomNavBarItem(
       icon: Icon(Icons.settings, size: 30.sp),
       inactiveIcon: Icon(Icons.settings, size: 25.sp),
@@ -61,8 +52,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   // app bars
   List<CustomAppbar> _appbars() => [
-    const CustomAppbar(
+    CustomAppbar(
       title: 'Home', 
+      trailing: IconButton(
+        onPressed: () {
+          navigatorPush(context, const RecordsScreen());
+        }, 
+        icon: Icon(Icons.bar_chart, color: kFourthColor, size: 30.sp,),
+      ),
     ),
     const CustomAppbar(
       title: 'Settings', 

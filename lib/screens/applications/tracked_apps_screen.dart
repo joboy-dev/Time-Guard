@@ -45,14 +45,14 @@ class _TrackedAppsScreenState extends State<TrackedAppsScreen> {
             elevation: 0.0,
             trailing: IconButton(
               onPressed: () {
-                navigatorPush(context, SearchScreen(searchList: context.read<AppProvider>().trackedApps,));
+                navigatorPush(context, SearchScreen(searchList: context.read<AppProvider>().trackedApps, isUsageDataScreen: false,));
               },
               icon: Icon(Icons.search, color: kPrimaryColor, size: 20.sp,),
             ),
           ),
 
           SizedBox(
-            height: 475.h,
+            height: 460.h,
             child: ListView.builder(
               itemCount: trackedApps.length,
               itemBuilder: (context, index) {
@@ -78,29 +78,21 @@ class _TrackedAppsScreenState extends State<TrackedAppsScreen> {
                       fontSize: 12.sp
                     ),
                   ),
-                  trailing: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextButton(
-                        onPressed: () async {                  
-                          await isarDb.untrackApp(context, app.id);
-                          showSnackbar(context, '${app.appName} removed from tracked apps list.');
-                          setState(() {
-                            
-                          });
-                        }, 
-                        child: Text('Untrack', style: kSecondaryNormalTextStyle(context),),
+                  trailing: TextButton(
+                    onPressed: () async {                  
+                      await isarDb.untrackApp(context, app.id);
+                      showSnackbar(context, '${app.appName} removed from tracked apps list.');
+                      setState(() {
+                        
+                      });
+                    }, 
+                    child: Text(
+                      'Untrack', 
+                      style: kSecondaryNormalTextStyle(context).copyWith(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold
                       ),
-
-                      IconButton(
-                        onPressed: () async {
-
-                        },
-                        icon: Icon(Icons.alarm, size: 20.sp, color: kFourthColor,),
-                      ),
-                    ],
+                    ),
                   ),
                 );
               },

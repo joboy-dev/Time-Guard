@@ -37,13 +37,28 @@ const AppSchema = CollectionSchema(
       name: r'packageName',
       type: IsarType.string,
     ),
-    r'timeLimit': PropertySchema(
+    r'timeUsedOnApp': PropertySchema(
       id: 4,
-      name: r'timeLimit',
+      name: r'timeUsedOnApp',
       type: IsarType.string,
     ),
-    r'versionName': PropertySchema(
+    r'timeUsedOnAppInSeconds': PropertySchema(
       id: 5,
+      name: r'timeUsedOnAppInSeconds',
+      type: IsarType.long,
+    ),
+    r'usageLimit': PropertySchema(
+      id: 6,
+      name: r'usageLimit',
+      type: IsarType.string,
+    ),
+    r'usageLimitInSeconds': PropertySchema(
+      id: 7,
+      name: r'usageLimitInSeconds',
+      type: IsarType.long,
+    ),
+    r'versionName': PropertySchema(
+      id: 8,
       name: r'versionName',
       type: IsarType.string,
     )
@@ -76,7 +91,8 @@ int _appEstimateSize(
   }
   bytesCount += 3 + object.appName.length * 3;
   bytesCount += 3 + object.packageName.length * 3;
-  bytesCount += 3 + object.timeLimit.length * 3;
+  bytesCount += 3 + object.timeUsedOnApp.length * 3;
+  bytesCount += 3 + object.usageLimit.length * 3;
   bytesCount += 3 + object.versionName.length * 3;
   return bytesCount;
 }
@@ -91,8 +107,11 @@ void _appSerialize(
   writer.writeString(offsets[1], object.appName);
   writer.writeBool(offsets[2], object.isTracked);
   writer.writeString(offsets[3], object.packageName);
-  writer.writeString(offsets[4], object.timeLimit);
-  writer.writeString(offsets[5], object.versionName);
+  writer.writeString(offsets[4], object.timeUsedOnApp);
+  writer.writeLong(offsets[5], object.timeUsedOnAppInSeconds);
+  writer.writeString(offsets[6], object.usageLimit);
+  writer.writeLong(offsets[7], object.usageLimitInSeconds);
+  writer.writeString(offsets[8], object.versionName);
 }
 
 App _appDeserialize(
@@ -106,8 +125,11 @@ App _appDeserialize(
     appName: reader.readString(offsets[1]),
     isTracked: reader.readBool(offsets[2]),
     packageName: reader.readString(offsets[3]),
-    timeLimit: reader.readString(offsets[4]),
-    versionName: reader.readString(offsets[5]),
+    timeUsedOnApp: reader.readString(offsets[4]),
+    timeUsedOnAppInSeconds: reader.readLong(offsets[5]),
+    usageLimit: reader.readString(offsets[6]),
+    usageLimitInSeconds: reader.readLong(offsets[7]),
+    versionName: reader.readString(offsets[8]),
   );
   object.id = id;
   return object;
@@ -131,6 +153,12 @@ P _appDeserializeProp<P>(
     case 4:
       return (reader.readString(offset)) as P;
     case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
+      return (reader.readLong(offset)) as P;
+    case 8:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -688,20 +716,20 @@ extension AppQueryFilter on QueryBuilder<App, App, QFilterCondition> {
     });
   }
 
-  QueryBuilder<App, App, QAfterFilterCondition> timeLimitEqualTo(
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'timeLimit',
+        property: r'timeUsedOnApp',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<App, App, QAfterFilterCondition> timeLimitGreaterThan(
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -709,14 +737,14 @@ extension AppQueryFilter on QueryBuilder<App, App, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'timeLimit',
+        property: r'timeUsedOnApp',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<App, App, QAfterFilterCondition> timeLimitLessThan(
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -724,14 +752,14 @@ extension AppQueryFilter on QueryBuilder<App, App, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'timeLimit',
+        property: r'timeUsedOnApp',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<App, App, QAfterFilterCondition> timeLimitBetween(
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -740,7 +768,7 @@ extension AppQueryFilter on QueryBuilder<App, App, QFilterCondition> {
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'timeLimit',
+        property: r'timeUsedOnApp',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -750,68 +778,306 @@ extension AppQueryFilter on QueryBuilder<App, App, QFilterCondition> {
     });
   }
 
-  QueryBuilder<App, App, QAfterFilterCondition> timeLimitStartsWith(
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'timeLimit',
+        property: r'timeUsedOnApp',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<App, App, QAfterFilterCondition> timeLimitEndsWith(
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'timeLimit',
+        property: r'timeUsedOnApp',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<App, App, QAfterFilterCondition> timeLimitContains(String value,
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppContains(
+      String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'timeLimit',
+        property: r'timeUsedOnApp',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<App, App, QAfterFilterCondition> timeLimitMatches(String pattern,
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppMatches(
+      String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'timeLimit',
+        property: r'timeUsedOnApp',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<App, App, QAfterFilterCondition> timeLimitIsEmpty() {
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'timeLimit',
+        property: r'timeUsedOnApp',
         value: '',
       ));
     });
   }
 
-  QueryBuilder<App, App, QAfterFilterCondition> timeLimitIsNotEmpty() {
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'timeLimit',
+        property: r'timeUsedOnApp',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppInSecondsEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'timeUsedOnAppInSeconds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition>
+      timeUsedOnAppInSecondsGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'timeUsedOnAppInSeconds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppInSecondsLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'timeUsedOnAppInSeconds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> timeUsedOnAppInSecondsBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'timeUsedOnAppInSeconds',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'usageLimit',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'usageLimit',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'usageLimit',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'usageLimit',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'usageLimit',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'usageLimit',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitContains(String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'usageLimit',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'usageLimit',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'usageLimit',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'usageLimit',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitInSecondsEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'usageLimitInSeconds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitInSecondsGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'usageLimitInSeconds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitInSecondsLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'usageLimitInSeconds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<App, App, QAfterFilterCondition> usageLimitInSecondsBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'usageLimitInSeconds',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -1000,15 +1266,51 @@ extension AppQuerySortBy on QueryBuilder<App, App, QSortBy> {
     });
   }
 
-  QueryBuilder<App, App, QAfterSortBy> sortByTimeLimit() {
+  QueryBuilder<App, App, QAfterSortBy> sortByTimeUsedOnApp() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timeLimit', Sort.asc);
+      return query.addSortBy(r'timeUsedOnApp', Sort.asc);
     });
   }
 
-  QueryBuilder<App, App, QAfterSortBy> sortByTimeLimitDesc() {
+  QueryBuilder<App, App, QAfterSortBy> sortByTimeUsedOnAppDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timeLimit', Sort.desc);
+      return query.addSortBy(r'timeUsedOnApp', Sort.desc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> sortByTimeUsedOnAppInSeconds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeUsedOnAppInSeconds', Sort.asc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> sortByTimeUsedOnAppInSecondsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeUsedOnAppInSeconds', Sort.desc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> sortByUsageLimit() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usageLimit', Sort.asc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> sortByUsageLimitDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usageLimit', Sort.desc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> sortByUsageLimitInSeconds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usageLimitInSeconds', Sort.asc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> sortByUsageLimitInSecondsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usageLimitInSeconds', Sort.desc);
     });
   }
 
@@ -1086,15 +1388,51 @@ extension AppQuerySortThenBy on QueryBuilder<App, App, QSortThenBy> {
     });
   }
 
-  QueryBuilder<App, App, QAfterSortBy> thenByTimeLimit() {
+  QueryBuilder<App, App, QAfterSortBy> thenByTimeUsedOnApp() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timeLimit', Sort.asc);
+      return query.addSortBy(r'timeUsedOnApp', Sort.asc);
     });
   }
 
-  QueryBuilder<App, App, QAfterSortBy> thenByTimeLimitDesc() {
+  QueryBuilder<App, App, QAfterSortBy> thenByTimeUsedOnAppDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timeLimit', Sort.desc);
+      return query.addSortBy(r'timeUsedOnApp', Sort.desc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> thenByTimeUsedOnAppInSeconds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeUsedOnAppInSeconds', Sort.asc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> thenByTimeUsedOnAppInSecondsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeUsedOnAppInSeconds', Sort.desc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> thenByUsageLimit() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usageLimit', Sort.asc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> thenByUsageLimitDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usageLimit', Sort.desc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> thenByUsageLimitInSeconds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usageLimitInSeconds', Sort.asc);
+    });
+  }
+
+  QueryBuilder<App, App, QAfterSortBy> thenByUsageLimitInSecondsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usageLimitInSeconds', Sort.desc);
     });
   }
 
@@ -1139,10 +1477,30 @@ extension AppQueryWhereDistinct on QueryBuilder<App, App, QDistinct> {
     });
   }
 
-  QueryBuilder<App, App, QDistinct> distinctByTimeLimit(
+  QueryBuilder<App, App, QDistinct> distinctByTimeUsedOnApp(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'timeLimit', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'timeUsedOnApp',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<App, App, QDistinct> distinctByTimeUsedOnAppInSeconds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'timeUsedOnAppInSeconds');
+    });
+  }
+
+  QueryBuilder<App, App, QDistinct> distinctByUsageLimit(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'usageLimit', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<App, App, QDistinct> distinctByUsageLimitInSeconds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'usageLimitInSeconds');
     });
   }
 
@@ -1185,9 +1543,27 @@ extension AppQueryProperty on QueryBuilder<App, App, QQueryProperty> {
     });
   }
 
-  QueryBuilder<App, String, QQueryOperations> timeLimitProperty() {
+  QueryBuilder<App, String, QQueryOperations> timeUsedOnAppProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'timeLimit');
+      return query.addPropertyName(r'timeUsedOnApp');
+    });
+  }
+
+  QueryBuilder<App, int, QQueryOperations> timeUsedOnAppInSecondsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'timeUsedOnAppInSeconds');
+    });
+  }
+
+  QueryBuilder<App, String, QQueryOperations> usageLimitProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'usageLimit');
+    });
+  }
+
+  QueryBuilder<App, int, QQueryOperations> usageLimitInSecondsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'usageLimitInSeconds');
     });
   }
 

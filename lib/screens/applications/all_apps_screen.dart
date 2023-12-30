@@ -36,14 +36,14 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
             elevation: 0.0,
             trailing: IconButton(
               onPressed: () {
-                navigatorPush(context, SearchScreen(searchList: context.read<AppProvider>().allApps,));
+                navigatorPush(context, SearchScreen(searchList: context.read<AppProvider>().allApps, isUsageDataScreen: false,));
               },
               icon: Icon(Icons.search, color: kPrimaryColor, size: 20.sp,),
             ),
           ),
 
           SizedBox(
-            height: 475.h,
+            height: 460.h,
             child: ListView.builder(
               itemCount: apps.length,
               itemBuilder: (context, index) {
@@ -77,7 +77,13 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
                         
                       });
                     }, 
-                    child: Text('Untrack', style: kSecondaryNormalTextStyle(context),),
+                    child: Text(
+                      'Untrack', 
+                      style: kSecondaryNormalTextStyle(context).copyWith(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
                   ) : TextButton(
                     onPressed: () async {                  
                       await isarDb.trackApp(context, app.id);
@@ -86,7 +92,13 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
                         
                       });
                     }, 
-                    child: Text('Track', style: kSecondaryNormalTextStyle(context),),
+                    child: Text(
+                      'Track', 
+                      style: kSecondaryNormalTextStyle(context).copyWith(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
                   ),
                 );
               },

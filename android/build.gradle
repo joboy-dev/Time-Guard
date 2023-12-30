@@ -1,12 +1,17 @@
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.8.10'
+    // ext {
+    //    compileSdkVersion = 34
+    //    targetSdkVersion = flutter.targetSdkVersion 
+    //    appCompatVersion = "1.4.2"
+    // }
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -15,6 +20,10 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+           // [required] background_fetch
+           url "${project(':background_fetch').projectDir}/libs"
+        }
     }
 }
 

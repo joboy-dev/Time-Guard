@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:time_guard/services/isar.dart';
-import 'package:time_guard/shared/utils/logger.dart';
 import 'package:usage_stats/usage_stats.dart';
 
 Future<Map<String, dynamic>> getUsageData(BuildContext context, {
@@ -65,4 +63,34 @@ Future<Map<String, dynamic>> getUsageData(BuildContext context, {
     // logger('UsageStats: $data');
 
     return data;
+}
+
+loadUsageData(BuildContext context) async {
+  Map<String, dynamic> usageData = {};
+  List allAppsData = [];
+  List usedAppsData = [];
+
+  allAppsData.clear();
+  usedAppsData.clear();
+
+  // Map<String, dynamic> data = await getUsageData(context);
+  // usageData = data;
+
+  usageData = await getUsageData(context);
+
+  // Add all apps data into a list
+  for (var appData in usageData['appData']) {
+    allAppsData.add(appData);
+
+    if (appData['timeUsedOnAppInSeconds'] > 0) {
+      usedAppsData.add(appData);
+    }
+  }
+
+  return {
+    'allAppsData': allAppsData,
+    'usedAppsData': usedAppsData,
+    'totalHours': usageData['totalHours'],
+    'totalMinutes': usageData['totalMinutes'],
+  };
 }

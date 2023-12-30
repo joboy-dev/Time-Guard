@@ -2,21 +2,22 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:time_guard/models/app_model.dart';
 import 'package:time_guard/screens/base_screen.dart';
-import 'package:time_guard/services/provider/app_provider.dart';
+import 'package:time_guard/screens/dialog/set_usage_limit_dialog.dart';
 import 'package:time_guard/shared/constants.dart';
 import 'package:time_guard/shared/utils/utility_functions.dart';
 import 'package:time_guard/shared/widgets/custom_appbar.dart';
+import 'package:time_guard/shared/widgets/dialog.dart';
 import 'package:time_guard/shared/widgets/snackbar.dart';
 import 'package:time_guard/shared/widgets/textfield.dart';
 import 'package:time_guard/services/isar.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key, required this.searchList});
+  const SearchScreen({super.key, required this.searchList, required this.isUsageDataScreen});
 
   final List<App> searchList;
+  final bool isUsageDataScreen;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -93,7 +94,81 @@ class _SearchScreenState extends State<SearchScreen> {
               itemBuilder: (context, index) {
                 final app = apps?[index];
           
-                return ListTile(
+                return widget.isUsageDataScreen 
+                // Usage Data Screen
+                ? ListTile(
+                    leading: CircleAvatar(
+                      radius: 20.r,
+                      backgroundImage: MemoryImage(convertToUint8Listt(app!.appIcon!), scale: 1.r),
+                    ),
+                    minLeadingWidth: 40.w,
+                    title: Text(
+                      app.appName,
+                      style: kSecondaryNormalTextStyle(context).copyWith(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    subtitle: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'App Usage Limit: ',
+                              style: kSecondaryNormalTextStyle(context).copyWith(
+                                color: kFourthColor,
+                                fontSize: 12.sp
+                              ),
+                            ),
+    
+                            Text(
+                              app.usageLimit,
+                              style: kSecondaryNormalTextStyle(context).copyWith(
+                                color: kPrimaryColor,
+                                fontSize: 12.sp
+                              ),
+                            ),
+                          ],
+                        ),
+                        
+                        Row(
+                          children: [
+                            Text(
+                              'Time Spent on App: ',
+                              style: kSecondaryNormalTextStyle(context).copyWith(
+                                color: kFourthColor,
+                                fontSize: 12.sp
+                              ),
+                            ),
+    
+                            Text(
+                              app.timeUsedOnApp,
+                              style: kSecondaryNormalTextStyle(context).copyWith(
+                                color: kPrimaryColor,
+                                fontSize: 12.sp
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    trailing: TextButton(
+                      onPressed: () async {
+                        showDialogBox(context: context, screen: SetUsageLimitDialog(app: app));
+                      }, 
+                      child: Text(
+                        'Set Limit', 
+                        style: kSecondaryNormalTextStyle(context).copyWith(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ),
+                  ) 
+
+                  // Not Usage Data Screen
+                  : ListTile(
                   leading: CircleAvatar(
                     radius: 20.r,
                     backgroundImage: MemoryImage(convertToUint8Listt(app!.appIcon!), scale: 1.r),
@@ -102,14 +177,15 @@ class _SearchScreenState extends State<SearchScreen> {
                   title: Text(
                     app.appName,
                     style: kSecondaryNormalTextStyle(context).copyWith(
-                      fontSize: 17.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   subtitle: Text(
                     app.versionName,
                     style: kSecondaryNormalTextStyle(context).copyWith(
-                      color: kFourthColor
+                      color: kFourthColor,
+                      fontSize: 12.sp,
                     ),
                   ),
                   trailing: app.isTracked ? TextButton(
@@ -120,7 +196,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         
                       });
                     }, 
-                    child: Text('Untrack', style: kSecondaryNormalTextStyle(context),),
+                    child: Text('Untrack', style: kSecondaryNormalTextStyle(context).copyWith(fontSize: 12.sp),),
                   ) : TextButton(
                     onPressed: () async {                  
                       await isarDb.trackApp(context, app.id);
@@ -129,7 +205,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         
                       });
                     }, 
-                    child: Text('Track', style: kSecondaryNormalTextStyle(context),),
+                    child: Text('Track', style: kSecondaryNormalTextStyle(context).copyWith(fontSize: 12.sp),),
                   ),
                 );
               },

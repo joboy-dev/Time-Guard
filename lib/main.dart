@@ -4,22 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:time_guard/screens/onboarding/splash_screen.dart';
 import 'package:time_guard/services/provider/app_provider.dart';
 import 'package:time_guard/services/provider/pin_store.dart';
+import 'package:time_guard/services/provider/record_provider.dart';
 import 'package:time_guard/services/provider/theme_provider.dart';
 import 'package:time_guard/shared/constants.dart';
+
+// Initialize notifications plugin
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  // Request notification permission
+  flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+    AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+
   runApp(
+
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
         ChangeNotifierProvider(create: (context) => PinStore()),
         ChangeNotifierProvider(create: (context) => AppProvider()),
+        ChangeNotifierProvider(create: (context) => RecordProvider()),
       ],
       child: DevicePreview(
         enabled: !kReleaseMode,
@@ -36,8 +48,6 @@ class TimeGuard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Animate.restartOnHotReload = true;
-
-
     return Consumer<ThemeProvider>(
       builder: (context, theme, child) {
         /// Function to get the theme for the app

@@ -10,7 +10,10 @@ class App {
   String versionName;
   String? appIcon;
   bool isTracked;
-  String timeLimit;
+  String timeUsedOnApp;
+  String usageLimit;
+  int timeUsedOnAppInSeconds;
+  int usageLimitInSeconds;
 
   App({
     required this.appName,
@@ -18,6 +21,9 @@ class App {
     required this.versionName,
     this.appIcon,
     required this.isTracked,
-    required this.timeLimit,
+    required this.timeUsedOnApp,
+    required this.usageLimit,
+    required this.timeUsedOnAppInSeconds,
+    required this.usageLimitInSeconds,
   });
 }

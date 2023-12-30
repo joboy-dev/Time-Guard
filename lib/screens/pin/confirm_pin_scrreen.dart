@@ -35,6 +35,7 @@ class _ConfirmPinScreenState extends State<ConfirmPinScreen> {
         showSnackbar(context, 'Registering pin...');
         pinStore.setPin(pinInputController.text);
         await isarDb.addInstalledApps(context);
+        // await BackgroundService().init();
         navigatorPushReplacement(context, const LoginScreen());
         showSnackbar(context, 'Pin has been registered');
       }

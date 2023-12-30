@@ -45,14 +45,14 @@ class _UntrackedAppsScreenState extends State<UntrackedAppsScreen> {
             elevation: 0.0,
             trailing: IconButton(
               onPressed: () {
-                navigatorPush(context, SearchScreen(searchList: context.read<AppProvider>().untrackedApps,));
+                navigatorPush(context, SearchScreen(searchList: context.read<AppProvider>().untrackedApps, isUsageDataScreen: false,));
               },
               icon: Icon(Icons.search, color: kPrimaryColor, size: 20.sp,),
             ),
           ),
 
           SizedBox(
-            height: 475.h,
+            height: 460.h,
             child: ListView.builder(
               itemCount: untrackedApps.length,
               itemBuilder: (context, index) {
@@ -86,7 +86,13 @@ class _UntrackedAppsScreenState extends State<UntrackedAppsScreen> {
                         
                       });
                     }, 
-                    child: Text('Track', style: kSecondaryNormalTextStyle(context),),
+                    child: Text(
+                      'Track', 
+                      style: kSecondaryNormalTextStyle(context).copyWith(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
                   ),
                 );
               },

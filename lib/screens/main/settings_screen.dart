@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:time_guard/screens/applications/all_apps_screen.dart';
 import 'package:time_guard/screens/applications/tracked_apps_screen.dart';
 import 'package:time_guard/screens/applications/untracked_apps_screen.dart';
+import 'package:time_guard/screens/applications/usage_limit_screen.dart';
 import 'package:time_guard/screens/base_screen.dart';
 import 'package:time_guard/screens/dialog/clear_data_dialog.dart';
 import 'package:time_guard/screens/dialog/select_theme_dialog.dart';
@@ -51,6 +52,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 fontSize: 15.sp,
                 onPressed: () {
                   navigatorPush(context, const UntrackedAppsScreen());
+                }
+              ),
+              SizedBox(height: 10.h),
+
+              IconTextButton(
+                text: 'Set Usage Limit (Tracked apps)',
+                fontSize: 15.sp,
+                onPressed: () {
+                  navigatorPush(context, const UsageLimitScreen());
                 }
               ),
 

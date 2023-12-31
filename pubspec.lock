@@ -294,38 +294,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0+1"
-  flutter_background_service:
-    dependency: "direct main"
-    description:
-      name: flutter_background_service
-      sha256: "94d9a143852729140e17254a53769383b03738cd92b6e588a8762003e6cd9dd9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.5"
-  flutter_background_service_android:
-    dependency: transitive
-    description:
-      name: flutter_background_service_android
-      sha256: "30863ebafd8214b8e76d5e5c9f27887dc5cc303fcf3e89f71534f621fc486782"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.2.2"
-  flutter_background_service_ios:
-    dependency: transitive
-    description:
-      name: flutter_background_service_ios
-      sha256: ab73657535876e16abc89e40f924df3e92ad3dee83f64d187081417e824709ed
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.0"
-  flutter_background_service_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_background_service_platform_interface
-      sha256: cd5720ff5b051d551a4734fae16683aace779bd0425e8d3f15d84a0cdcc2d8d9
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -874,14 +842,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
-  sprintf:
-    dependency: transitive
-    description:
-      name: sprintf
-      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.0"
   stack_trace:
     dependency: transitive
     description:
@@ -970,14 +930,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-  uuid:
-    dependency: "direct main"
-    description:
-      name: uuid
-      sha256: "22c94e5ad1e75f9934b766b53c742572ee2677c56bc871d850a57dad0f82127f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.2.2"
   vector_math:
     dependency: transitive
     description:

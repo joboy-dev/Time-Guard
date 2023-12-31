@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:provider/provider.dart';
 import 'package:time_guard/models/app_model.dart';
@@ -29,7 +28,7 @@ class BackgroundService {
         requiresCharging: false,
         requiresStorageNotLow: false,
         requiresDeviceIdle: false,
-        requiredNetworkType: NetworkType.NONE
+        requiredNetworkType: NetworkType.NONE,
     ), 
     // onFetch
     (String taskId) async {

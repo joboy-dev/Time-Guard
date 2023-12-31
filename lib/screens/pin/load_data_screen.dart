@@ -3,8 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:time_guard/screens/base_screen.dart';
-import 'package:time_guard/services/background_service.dart';
-// import 'package:time_guard/services/background_service.dart';
 import 'package:time_guard/services/isar.dart';
 import 'package:time_guard/shared/constants.dart';
 import 'package:time_guard/shared/utils/navigator.dart';

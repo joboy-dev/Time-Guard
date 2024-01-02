@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:time_guard/services/isar.dart';
 import 'package:usage_stats/usage_stats.dart';
 
-Future<Map<String, dynamic>> getUsageData(BuildContext context, {
-    int hours=24,
-  }) async {
+// enum FilterDays {h12, h24, d3, d7, d14, d30}
+
+Map<String, int> filterDays = {
+  '12 Hours': 12,
+  '24 Hours': 24,
+  '3 Days': 24 * 3,
+  '7 Days': 24 * 7,
+  // '14 Days': 24 * 14,
+  '30 Days': 24 * 30,
+};
+
+Future<Map<String, dynamic>> getUsageData(BuildContext context, int hours) async {
     // Screen time
     int totalOnScreenTime = 0;
     int screenTimeHour = 0;
@@ -12,7 +21,6 @@ Future<Map<String, dynamic>> getUsageData(BuildContext context, {
     int overallScreenTimeInSeconds = 0;
 
     DateTime endDate = DateTime.now();
-    // DateTime startDate = DateTime(endDate.year-startDateYearsToRemove, endDate.month-startDateMonthsToRemove, endDate.day-startDateDaysToRemove, 0, 0, 0);
     DateTime startDate = endDate.subtract(Duration(hours: hours));
 
     List<String> packageNames = [];
@@ -22,7 +30,6 @@ Future<Map<String, dynamic>> getUsageData(BuildContext context, {
     UsageStats.grantUsagePermission();
 
     List<UsageInfo> usageStats = await UsageStats.queryUsageStats(startDate, endDate);
-
 
     for (var appStat in usageStats) {
       totalOnScreenTime += (double.parse(appStat.totalTimeInForeground!)/1000/60).round();
@@ -65,7 +72,7 @@ Future<Map<String, dynamic>> getUsageData(BuildContext context, {
     return data;
 }
 
-loadUsageData(BuildContext context) async {
+loadUsageData(BuildContext context, {int hours=12}) async {
   Map<String, dynamic> usageData = {};
   List allAppsData = [];
   List usedAppsData = [];
@@ -76,7 +83,7 @@ loadUsageData(BuildContext context) async {
   // Map<String, dynamic> data = await getUsageData(context);
   // usageData = data;
 
-  usageData = await getUsageData(context);
+  usageData = await getUsageData(context, hours);
 
   // Add all apps data into a list
   for (var appData in usageData['appData']) {

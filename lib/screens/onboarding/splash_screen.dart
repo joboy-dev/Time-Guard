@@ -5,7 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:time_guard/screens/wrapper.dart';
 import 'package:time_guard/services/background_service.dart';
-import 'package:time_guard/services/notification.dart';
+// import 'package:time_guard/services/notification.dart';
 import 'package:time_guard/shared/constants.dart';
 import 'package:time_guard/shared/utils/navigator.dart';
 
@@ -23,7 +23,6 @@ class SplashScreen extends StatelessWidget {
           width: 200.w,
         ).animate(
           onComplete: (controller) async {
-            await Notifications.init();
             await BackgroundService().initPlatformState(context);
 
             navigatorPushReplacement(context, const Wrapper());

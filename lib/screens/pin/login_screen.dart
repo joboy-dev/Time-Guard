@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:time_guard/screens/dialog/reset_pin_dialog.dart';
 import 'package:time_guard/screens/pin/base_pin_screen.dart';
 import 'package:time_guard/screens/pin/load_data_screen.dart';
+import 'package:time_guard/services/isar.dart';
 import 'package:time_guard/services/provider/pin_store.dart';
 import 'package:time_guard/shared/utils/navigator.dart';
 import 'package:time_guard/shared/widgets/button.dart';
@@ -21,6 +22,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final pinInputController = PinInputController(length: 4);
+  final isarDb = IsarDB();
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (pinInputController.text != pin) {
         showSnackbar(context, 'Pin is incorrect. Try again');
       } else {
+        await isarDb.reloadData(context);
+
         // Navigatr to home page
         navigatorPushReplacement(context, const LoadDataScreen());
         showSnackbar(context, 'Pin is correct.');

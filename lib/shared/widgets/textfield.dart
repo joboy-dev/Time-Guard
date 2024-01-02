@@ -174,3 +174,103 @@ class NormalTextField extends StatelessWidget {
     );
   }
 }
+
+
+class DropDownFormField extends StatelessWidget {
+
+  const DropDownFormField({
+    super.key,
+    required this.value,
+    required this.items,
+    this.labelText,
+    this.iconSize,
+    this.fontSize,
+    this.padding,
+    required this.onChanged,
+    required this.prefixIcon,
+    required this.iconColor, 
+    required this.enabledBorderColor, 
+    required this.focusedBorderColor, 
+    required this.errorBorderColor, 
+    required this.focusedErrorBorderColor, 
+    required this.errorTextStyleColor,
+    this.borderRadius,
+  });
+
+  final dynamic value;
+  final String? labelText;
+  final List<DropdownMenuItem> items;
+  final double? fontSize;
+  final double? iconSize;
+  final EdgeInsets? padding;
+  final IconData prefixIcon;
+  final Color iconColor;
+  final Color enabledBorderColor;
+  final Color focusedBorderColor;
+  final Color errorBorderColor;
+  final Color focusedErrorBorderColor;
+  final Color errorTextStyleColor;
+  final void Function(dynamic value)? onChanged;
+  final double? borderRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      value: value,
+      items: items,
+      style: kSecondaryNormalTextStyle(context).copyWith(fontSize: fontSize ?? 15.sp),
+      onChanged: onChanged,
+      dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+      elevation: 4,
+      padding: padding ?? const EdgeInsets.only(bottom: 20.0),
+      decoration: InputDecoration(
+        hintText: labelText,
+        hintStyle: kNormalTextStyle(context).copyWith(
+          color: kTextColor(context).withOpacity(0.5), 
+          fontSize: fontSize ?? 15.sp,
+          fontWeight: FontWeight.normal,
+        ),
+        prefixIcon: Padding(
+          padding: EdgeInsets.only(left: 15.r, right: 25.r),
+          child: Icon(
+            prefixIcon,
+            color: iconColor,
+            size: iconSize ?? 20.r,
+          ),
+        ),
+        labelStyle: TextStyle(
+          color: kTextColor(context).withOpacity(0.5),
+          fontWeight: FontWeight.normal,
+          fontSize: 15.sp,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: enabledBorderColor, width: 1.w),
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? 20.r)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: focusedBorderColor, width: 1.w),
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? 20.r)),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: errorBorderColor, width: 1.w),
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? 20.r)),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: focusedErrorBorderColor, width: 1.w),
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? 20.r)),
+        ),
+        errorStyle: TextStyle(
+          color: errorTextStyleColor,
+          fontSize: 17.sp,
+        ),
+      ),
+      validator: (value) {
+        if (value == null) {
+          return 'Make a choice';
+        } else {
+          return null;
+        }
+      },
+    );
+  }
+}

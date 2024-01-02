@@ -23,7 +23,6 @@ class _LoadDataScreenState extends State<LoadDataScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await isarDb.reloadData(context);
-
       navigatorPushReplacement(context, const BottomNavBar());
     });
     super.initState();

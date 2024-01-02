@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:time_guard/models/app_model.dart';
-import 'package:time_guard/screens/applications/search_screen.dart';
+import 'package:time_guard/shared/widgets/search_screen.dart';
 import 'package:time_guard/screens/base_screen.dart';
 import 'package:time_guard/screens/dialog/set_usage_limit_dialog.dart';
 import 'package:time_guard/services/isar.dart';
 import 'package:time_guard/services/provider/app_provider.dart';
 import 'package:time_guard/shared/constants.dart';
 import 'package:time_guard/shared/utils/navigator.dart';
-import 'package:time_guard/shared/utils/usage_stats.dart';
+import 'package:time_guard/services/usage_stats.dart';
 import 'package:time_guard/shared/utils/utility_functions.dart';
 import 'package:time_guard/shared/widgets/custom_appbar.dart';
 import 'package:time_guard/shared/widgets/dialog.dart';
@@ -134,7 +134,7 @@ class _UsageLimitScreenState extends State<UsageLimitScreen> {
                         Row(
                           children: [
                             Text(
-                              'Time Spent on App: ',
+                              'Time Spent: ',
                               style: kSecondaryNormalTextStyle(context).copyWith(
                                 color: kFourthColor,
                                 fontSize: 12.sp

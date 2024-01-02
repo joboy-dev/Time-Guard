@@ -3,7 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:time_guard/screens/applications/search_screen.dart';
+import 'package:time_guard/screens/dialog/app_data_dialog.dart';
+import 'package:time_guard/shared/widgets/dialog.dart';
+import 'package:time_guard/shared/widgets/search_screen.dart';
 import 'package:time_guard/screens/base_screen.dart';
 import 'package:time_guard/services/isar.dart';
 import 'package:time_guard/services/provider/app_provider.dart';
@@ -30,7 +32,7 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
       screen: Column(
         children: [
           CustomAppbar(
-            title: 'All Apps',
+            title: 'Installed Apps',
             backgroundColor: Colors.transparent,
             titleColor: kFourthColor,
             elevation: 0.0,
@@ -43,60 +45,65 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
           ),
 
           SizedBox(
-            height: 460.h,
+            height: 440.h,
             child: ListView.builder(
               itemCount: apps.length,
               itemBuilder: (context, index) {
                 final app = apps[index];
           
-                return ListTile(
-                  leading: CircleAvatar(
-                    radius: 20.r,
-                    backgroundImage: MemoryImage(convertToUint8Listt(app.appIcon!), scale: 1.r),
-                  ),
-                  minLeadingWidth: 40.w,
-                  title: Text(
-                    app.appName,
-                    style: kSecondaryNormalTextStyle(context).copyWith(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w700,
+                return InkWell(
+                  onTap: () {
+                    showDialogBox(context: context, screen: AppDataDialog(app: app));
+                  },
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 20.r,
+                      backgroundImage: MemoryImage(convertToUint8Listt(app.appIcon!)),
                     ),
-                  ),
-                  subtitle: Text(
-                    app.versionName,
-                    style: kSecondaryNormalTextStyle(context).copyWith(
-                      color: kFourthColor,
-                      fontSize: 12.sp
-                    ),
-                  ),
-                  trailing: app.isTracked ? TextButton(
-                    onPressed: () async {                  
-                      await isarDb.untrackApp(context, app.id);
-                      showSnackbar(context, '${app.appName} removed from tracked apps list.');
-                      setState(() {
-                        
-                      });
-                    }, 
-                    child: Text(
-                      'Untrack', 
+                    minLeadingWidth: 40.w,
+                    title: Text(
+                      app.appName,
                       style: kSecondaryNormalTextStyle(context).copyWith(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ) : TextButton(
-                    onPressed: () async {                  
-                      await isarDb.trackApp(context, app.id);
-                      showSnackbar(context, '${app.appName} added to tracked apps list.');
-                      setState(() {
-                        
-                      });
-                    }, 
-                    child: Text(
-                      'Track', 
+                    subtitle: Text(
+                      app.versionName,
                       style: kSecondaryNormalTextStyle(context).copyWith(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold
+                        color: kFourthColor,
+                        fontSize: 12.sp
+                      ),
+                    ),
+                    trailing: app.isTracked ? TextButton(
+                      onPressed: () async {                  
+                        await isarDb.untrackApp(context, app.id);
+                        showSnackbar(context, '${app.appName} removed from tracked apps list.');
+                        setState(() {
+                          
+                        });
+                      }, 
+                      child: Text(
+                        'Untrack', 
+                        style: kSecondaryNormalTextStyle(context).copyWith(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ) : TextButton(
+                      onPressed: () async {                  
+                        await isarDb.trackApp(context, app.id);
+                        showSnackbar(context, '${app.appName} added to tracked apps list.');
+                        setState(() {
+                          
+                        });
+                      }, 
+                      child: Text(
+                        'Track', 
+                        style: kSecondaryNormalTextStyle(context).copyWith(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold
+                        ),
                       ),
                     ),
                   ),

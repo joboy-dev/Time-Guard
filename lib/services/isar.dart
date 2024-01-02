@@ -10,7 +10,7 @@ import 'package:time_guard/models/records_model.dart';
 import 'package:time_guard/services/provider/app_provider.dart';
 import 'package:time_guard/services/provider/record_provider.dart';
 import 'package:time_guard/shared/utils/logger.dart';
-import 'package:time_guard/shared/utils/usage_stats.dart';
+import 'package:time_guard/services/usage_stats.dart';
 
 class IsarDB {
    late Future<Isar> db;

@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:time_guard/screens/base_screen.dart';
+import 'package:time_guard/screens/main/chart_screen.dart';
 import 'package:time_guard/shared/constants.dart';
+import 'package:time_guard/shared/utils/logger.dart';
+import 'package:time_guard/shared/utils/navigator.dart';
 import 'package:time_guard/shared/utils/utility_functions.dart';
-import 'package:time_guard/shared/utils/usage_stats.dart';
+import 'package:time_guard/services/usage_stats.dart';
 import 'package:time_guard/shared/widgets/custom_appbar.dart';
 import 'package:time_guard/shared/widgets/loader.dart';
+import 'package:time_guard/shared/widgets/textfield.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String? selectedFilterOption = filterDays.keys.first;
   Map<String, dynamic> usageData = {};
   List allAppsData = [];
   List usedAppsData = [];
@@ -43,15 +48,56 @@ class _HomeScreenState extends State<HomeScreen> {
             Center(
               child: Column(
                 children: [
-                  Text(
-                    'Todsy\'s date: ${currentDate.day}.${currentDate.month}.${currentDate.year}',
-                    style: kNormalTextStyle(context).copyWith(
-                      color: kFourthColor,
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Todsy\'s date: ${currentDate.day}.${currentDate.month}.${currentDate.year}',
+                          style: kNormalTextStyle(context).copyWith(
+                            color: kFourthColor,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: DropDownFormField(
+                          value: selectedFilterOption, 
+                          items: filterDays.keys.map(
+                            (day) => DropdownMenuItem(
+                              value: day,
+                              child: Text(
+                                day,
+                                style: kNormalTextStyle(context).copyWith(fontSize: 12.sp),
+                              ),
+                            )
+                          ).toList(), 
+                          onChanged: (value) async {
+                            setState(() {
+                              selectedFilterOption = value;
+                            });
+                            usageData = await loadUsageData(context, hours: filterDays[selectedFilterOption]!);
+
+                            setState(() {
+                              allAppsData = usageData['allAppsData'];
+                              usedAppsData = usageData['usedAppsData'];
+                            });
+                            
+                            logger(selectedFilterOption!);
+                          }, 
+                          prefixIcon: Icons.timer, 
+                          iconColor: kPrimaryColor, 
+                          enabledBorderColor: Colors.transparent,
+                          focusedBorderColor: Colors.transparent,
+                          errorBorderColor: kRedColor,
+                          focusedErrorBorderColor: kRedColor,
+                          errorTextStyleColor: kRedColor,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 10.h),
+
                   Text(
-                    'Total On Screen Time in the last 24 Hours',
+                    'Total On Screen Time in the last $selectedFilterOption',
                     style: kSecondaryNormalTextStyle(context).copyWith(fontSize: 17.sp, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
@@ -63,9 +109,12 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 150.h,
               width: 150.w,
               decoration: BoxDecoration(
-                border: Border.all(color: kPrimaryColor, width: 2.w, strokeAlign: BorderSide.strokeAlignCenter),
                 shape: BoxShape.circle,
-                color: kFourthColor
+                gradient: LinearGradient(
+                  colors: [kFourthColor, kPrimaryColor],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
               ),
               child: Center(
                 child: usageData['totalHours'] == null ? Loader(size: 20.r,) : Text(
@@ -81,16 +130,22 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 10.h),
 
             CustomAppbar(
-              title: 'App Usage in the Last 24 Hours',
+              title: 'App Usage in the Last $selectedFilterOption',
               titleColor: kFourthColor,
               backgroundColor: Colors.transparent,
+              trailing: IconButton(
+                onPressed: () {
+                  navigatorPush(context, ChartScreen(data: usedAppsData, filterDay: selectedFilterOption!,));
+                }, 
+                icon: Icon(Icons.timeline_rounded, color: kPrimaryColor, size: 20.sp,),
+              ),
             ),
 
             SizedBox(
-              height: 250.h,
+              height: 225.h,
               child: RefreshIndicator.adaptive(
                 onRefresh: () async {
-                  usageData = await loadUsageData(context);
+                  usageData = await loadUsageData(context, hours: filterDays[selectedFilterOption]!);
                   setState(() {
                     allAppsData = usageData['allAppsData'];
                     usedAppsData = usageData['usedAppsData'];
@@ -147,13 +202,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           flex: 1,
                           child: CircularPercentIndicator(
-                             radius: 20.r,
-                             backgroundColor: Colors.transparent,
-                             percent: (app['percentageTimeSpent']/100) > 1 ? 1 : app['percentageTimeSpent']/100,
-                            //  percent: 1,
-                             progressColor: kPrimaryColor,
-                             lineWidth: 2.w,
-                             center: Text(
+                              radius: 20.r,
+                              backgroundColor: Colors.transparent,
+                              animation: true,
+                              percent: (app['percentageTimeSpent']/100) > 1 ? 1 : app['percentageTimeSpent']/100,
+                              linearGradient: LinearGradient(colors: [kFourthColor, kPrimaryColor]),
+                              lineWidth: 2.w,
+                              center: Text(
                               '${app['percentageTimeSpent'].round()}%',
                               style: kNormalTextStyle(context).copyWith(
                                 fontSize: 10.sp,
@@ -173,37 +228,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-
-
-
-
-
-    // final allApps = context.watch<AppProvider>().allApps;
-    // List<App> availableApps = [];
-
-    // getAppUsageData() {
-    //   availableApps.clear();
-
-    //   for (App app in allApps) {
-    //     Map? appDetails = usedAppsData.firstWhere(
-    //       (data) => data.containsKey(app.packagdName),
-    //       orElse: () => null,
-    //     );
-
-    //     if (appDetails != null) {
-    //       if (packageNames.contains(appDetails[app.packageName]['packageName'])) {
-    //         availableApps.add(app);
-    //       }
-    //     }
-    //   }
-
-    //   // logger(availableApps.length);
-    //   // for (var newapp in availableApps) {
-    //   //   logger(newapp.appName);
-    //   // }
-    //   return availableApps;
-    // }
-
-    // Get app usage data as soon as widgets are built
-    // getAppUsageData();

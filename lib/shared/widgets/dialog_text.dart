@@ -22,6 +22,7 @@ class DialogText extends StatelessWidget {
             color: kTextColor(context), // match with dark mode
             fontSize: 17.sp,
           ),
+          textAlign: TextAlign.center,
         ),
         SizedBox(height: 20.h),
       ],

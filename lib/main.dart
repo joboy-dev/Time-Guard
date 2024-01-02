@@ -1,3 +1,4 @@
+import 'package:background_fetch/background_fetch.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,17 +7,45 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
+import 'package:time_guard/models/app_model.dart';
 import 'package:time_guard/screens/onboarding/splash_screen.dart';
+import 'package:time_guard/services/notification.dart';
 import 'package:time_guard/services/provider/app_provider.dart';
 import 'package:time_guard/services/provider/pin_store.dart';
 import 'package:time_guard/services/provider/record_provider.dart';
 import 'package:time_guard/services/provider/theme_provider.dart';
 import 'package:time_guard/shared/constants.dart';
+import 'package:time_guard/shared/utils/logger.dart';
 
 // Initialize notifications plugin
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-void main() {
+void backgroundFetchHeadlessTask(HeadlessTask task, BuildContext context) async {
+  var taskId = task.taskId;
+  logger(taskId);
+
+  final trackedApps = context.read<AppProvider>().trackedApps;
+
+  // Tracked Apps
+  for (App app in trackedApps) {
+    double timePercent = (app.timeUsedOnAppInSeconds / app.usageLimitInSeconds) * 100;
+    logger(timePercent);
+
+    if (app.timeUsedOnAppInSeconds >= app.usageLimitInSeconds) {
+      Notifications.showNotification(
+        title: '${app.appName} Usage Limit Reached', 
+        body: 'You have exceeded your usage limit of ${app.usageLimit} for ${app.appName} application. You have used the app for ${app.timeUsedOnApp}'
+      );
+    } else if (timePercent >= 85.0) {
+      Notifications.showNotification(
+        title: 'App usage limit warning', 
+        body: 'You are approaching your usage limit for ${app.appName}. You have spent ${app.timeUsedOnApp} and the limit set is ${app.usageLimit}'
+      );
+    }
+  }
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -24,8 +53,10 @@ void main() {
   flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
     AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
 
-  runApp(
+  await Notifications.init();
+  await BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 
+  runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeProvider()),

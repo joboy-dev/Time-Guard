@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:time_guard/screens/applications/search_screen.dart';
+import 'package:time_guard/shared/widgets/search_screen.dart';
 import 'package:time_guard/screens/base_screen.dart';
 import 'package:time_guard/services/isar.dart';
 import 'package:time_guard/services/provider/app_provider.dart';

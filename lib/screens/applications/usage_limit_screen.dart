@@ -1,9 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:time_guard/models/app_model.dart';
+import 'package:time_guard/shared/utils/animations.dart';
 import 'package:time_guard/shared/widgets/search_screen.dart';
 import 'package:time_guard/screens/base_screen.dart';
 import 'package:time_guard/screens/dialog/set_usage_limit_dialog.dart';
@@ -35,7 +37,7 @@ class _UsageLimitScreenState extends State<UsageLimitScreen> {
   }
 
   loadData() async {
-    usageData = await loadUsageData(context);
+    usageData = await loadUsageData();
     setState(() {
       allAppsData = usageData['allAppsData'];
     });
@@ -71,7 +73,7 @@ class _UsageLimitScreenState extends State<UsageLimitScreen> {
           CustomAppbar(
             title: 'Set Usage Limit',
             backgroundColor: Colors.transparent,
-            titleColor: kFourthColor,
+            titleColor: kTextColor(context).withOpacity(0.5),
             elevation: 0.0,
             trailing: IconButton(
               onPressed: () {
@@ -85,7 +87,7 @@ class _UsageLimitScreenState extends State<UsageLimitScreen> {
             height: 460.h,
             child: RefreshIndicator.adaptive(
               onRefresh: () async {
-                loadData();
+                await loadData();
               },
               color: kPrimaryColor,
               backgroundColor: kFourthColor,
@@ -115,8 +117,7 @@ class _UsageLimitScreenState extends State<UsageLimitScreen> {
                           children: [
                             Text(
                               'App Usage Limit: ',
-                              style: kSecondaryNormalTextStyle(context).copyWith(
-                                color: kFourthColor,
+                              style: kNormalTextStyle(context).copyWith(
                                 fontSize: 12.sp
                               ),
                             ),
@@ -135,8 +136,7 @@ class _UsageLimitScreenState extends State<UsageLimitScreen> {
                           children: [
                             Text(
                               'Time Spent: ',
-                              style: kSecondaryNormalTextStyle(context).copyWith(
-                                color: kFourthColor,
+                              style: kNormalTextStyle(context).copyWith(
                                 fontSize: 12.sp
                               ),
                             ),
@@ -164,6 +164,8 @@ class _UsageLimitScreenState extends State<UsageLimitScreen> {
                         ),
                       ),
                     ),
+                  ).animate(
+                    effects: MyEffects.fadeSlide()
                   );
                 },
               ),

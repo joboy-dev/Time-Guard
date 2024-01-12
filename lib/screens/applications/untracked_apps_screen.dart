@@ -1,8 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:time_guard/shared/utils/animations.dart';
 import 'package:time_guard/shared/widgets/search_screen.dart';
 import 'package:time_guard/screens/base_screen.dart';
 import 'package:time_guard/services/isar.dart';
@@ -41,7 +43,7 @@ class _UntrackedAppsScreenState extends State<UntrackedAppsScreen> {
           CustomAppbar(
             title: 'Untracked Apps',
             backgroundColor: Colors.transparent,
-            titleColor: kFourthColor,
+            titleColor: kTextColor(context).withOpacity(0.5),
             elevation: 0.0,
             trailing: IconButton(
               onPressed: () {
@@ -52,7 +54,7 @@ class _UntrackedAppsScreenState extends State<UntrackedAppsScreen> {
           ),
 
           SizedBox(
-            height: 460.h,
+            height: 440.h,
             child: ListView.builder(
               itemCount: untrackedApps.length,
               itemBuilder: (context, index) {
@@ -73,8 +75,7 @@ class _UntrackedAppsScreenState extends State<UntrackedAppsScreen> {
                   ),
                   subtitle: Text(
                     app.versionName,
-                    style: kSecondaryNormalTextStyle(context).copyWith(
-                      color: kFourthColor,
+                    style: kNormalTextStyle(context).copyWith(
                       fontSize: 12.sp
                     ),
                   ),
@@ -94,6 +95,8 @@ class _UntrackedAppsScreenState extends State<UntrackedAppsScreen> {
                       ),
                     ),
                   ),
+                ).animate(
+                    effects: MyEffects.fadeSlide()
                 );
               },
             ),

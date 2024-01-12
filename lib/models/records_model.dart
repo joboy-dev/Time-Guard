@@ -10,6 +10,8 @@ class Record{
   String mostUsedApp;
   String timeForMostUsedApp;
   int timeForMostUsedAppInSeconds;
+  int overallScreenTime;
+  String overallScreenTimeRefined;
 
   Record({
     required this.date,
@@ -17,5 +19,7 @@ class Record{
     required this.mostUsedApp,
     required this.timeForMostUsedApp,
     required this.timeForMostUsedAppInSeconds,
+    required this.overallScreenTime,
+    required this.overallScreenTimeRefined
   });
 }

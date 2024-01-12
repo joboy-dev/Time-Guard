@@ -15,7 +15,7 @@ class BarChartHorizontal extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Container(
+        child: SizedBox(
           width: double.infinity,
           height: 2.h,
           child: SizedBox(

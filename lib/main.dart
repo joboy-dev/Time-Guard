@@ -1,6 +1,6 @@
 import 'package:background_fetch/background_fetch.dart';
 import 'package:device_preview/device_preview.dart';
-import 'package:flutter/foundation.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:time_guard/models/app_model.dart';
 import 'package:time_guard/screens/onboarding/splash_screen.dart';
+import 'package:time_guard/services/isar.dart';
 import 'package:time_guard/services/notification.dart';
 import 'package:time_guard/services/provider/app_provider.dart';
 import 'package:time_guard/services/provider/pin_store.dart';
@@ -45,6 +46,14 @@ void backgroundFetchHeadlessTask(HeadlessTask task, BuildContext context) async 
   }
 }
 
+void addRecord() async {
+  logger('Start');
+  await IsarDB().addRecordIsarAlone();
+  logger('Done');
+}
+
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -53,6 +62,7 @@ void main() async {
   flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
     AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
 
+  await AndroidAlarmManager.initialize();
   await Notifications.init();
   await BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 
@@ -64,17 +74,27 @@ void main() async {
         ChangeNotifierProvider(create: (context) => AppProvider()),
         ChangeNotifierProvider(create: (context) => RecordProvider()),
       ],
-      child: DevicePreview(
-        enabled: !kReleaseMode,
-        builder: (context) => const TimeGuard(),
-      ),
-      // child: const TimeGuard()
+      // child: DevicePreview(
+      //   enabled: !kReleaseMode,
+      //   builder: (context) => const TimeGuard(),
+      // ),
+      child: const TimeGuard()
     )
   );
+
+  await AndroidAlarmManager.periodic(
+    const Duration(hours: 24), 
+    17, 
+    addRecord,
+    allowWhileIdle: true,
+    wakeup: true,
+  );
+
 }
 
 class TimeGuard extends StatelessWidget {
   const TimeGuard({super.key});
+
 
   @override
   Widget build(BuildContext context) {

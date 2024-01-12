@@ -1,9 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:time_guard/screens/dialog/app_data_dialog.dart';
+import 'package:time_guard/shared/utils/animations.dart';
 import 'package:time_guard/shared/widgets/dialog.dart';
 import 'package:time_guard/shared/widgets/search_screen.dart';
 import 'package:time_guard/screens/base_screen.dart';
@@ -34,7 +36,7 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
           CustomAppbar(
             title: 'Installed Apps',
             backgroundColor: Colors.transparent,
-            titleColor: kFourthColor,
+            titleColor: kTextColor(context).withOpacity(0.5),
             elevation: 0.0,
             trailing: IconButton(
               onPressed: () {
@@ -70,8 +72,7 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
                     ),
                     subtitle: Text(
                       app.versionName,
-                      style: kSecondaryNormalTextStyle(context).copyWith(
-                        color: kFourthColor,
+                      style: kNormalTextStyle(context).copyWith(
                         fontSize: 12.sp
                       ),
                     ),
@@ -106,6 +107,8 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
                         ),
                       ),
                     ),
+                  ).animate(
+                    effects: MyEffects.fadeSlide()
                   ),
                 );
               },

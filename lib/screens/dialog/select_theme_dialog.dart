@@ -23,7 +23,7 @@ class _SelectThemeDialogState extends State<SelectThemeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.read<ThemeProvider>();
+    final themeProvider = context.watch<ThemeProvider>();
 
     /// Function to determine which radio item will be selected
     bool isSelected(String value) {
@@ -58,10 +58,9 @@ class _SelectThemeDialogState extends State<SelectThemeDialog> {
                   setState(() {
                     selectedValue = value!;
                   });
-                  themeProvider.setThemeMode(value!);
+                  themeProvider.setThemeMode(selectedValue!);
                   showSnackbar(context, 'Theme set to $value theme');
                   navigatorPop(context);
-                  // logger(selectedValue!);
                 },
               ),
 
@@ -74,10 +73,9 @@ class _SelectThemeDialogState extends State<SelectThemeDialog> {
                   setState(() {
                     selectedValue = value!;
                   });
-                  themeProvider.setThemeMode(value!);
+                  themeProvider.setThemeMode(selectedValue!);
                   showSnackbar(context, 'Theme set to $value theme');
                   navigatorPop(context);
-                  // logger(selectedValue!);
                 },
               ),
 
@@ -90,23 +88,14 @@ class _SelectThemeDialogState extends State<SelectThemeDialog> {
                   setState(() {
                     selectedValue = value!;
                   });
-                  themeProvider.setThemeMode(value!);
+                  themeProvider.setThemeMode(selectedValue!);
                   showSnackbar(context, 'Theme set to $value theme');
                   navigatorPop(context);
-                  // logger(selectedValue!);
                 },
               ),
             ],
           ),
         ),
-
-        // DoubleButton(
-        //   inactiveButton: false, 
-        //   button2Text: 'Select', 
-        //   button2Color: kPrimaryColor, 
-        //   button2onPressed: () {
-        //   }
-        // )
       ].animate(
         interval: kDurationMs(200),
         effects: MyEffects.fadeSlide(),

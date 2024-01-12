@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:time_guard/screens/base_screen.dart';
-import 'package:time_guard/screens/main/chart_screen.dart';
+import 'package:time_guard/screens/main/app_usage_chart_screen.dart';
 import 'package:time_guard/shared/constants.dart';
+import 'package:time_guard/shared/utils/animations.dart';
 import 'package:time_guard/shared/utils/logger.dart';
 import 'package:time_guard/shared/utils/navigator.dart';
 import 'package:time_guard/shared/utils/utility_functions.dart';
@@ -28,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      usageData = await loadUsageData(context);
+      usageData = await loadUsageData();
       setState(() {
         allAppsData = usageData['allAppsData'];
         usedAppsData = usageData['usedAppsData'];
@@ -53,10 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Todsy\'s date: ${currentDate.day}.${currentDate.month}.${currentDate.year}',
-                          style: kNormalTextStyle(context).copyWith(
-                            color: kFourthColor,
-                          ),
+                          'Today\'s date: ${currentDate.day}.${currentDate.month}.${currentDate.year}',
+                          style: kNormalTextStyle(context),
                         ),
                       ),
                       Expanded(
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             setState(() {
                               selectedFilterOption = value;
                             });
-                            usageData = await loadUsageData(context, hours: filterDays[selectedFilterOption]!);
+                            usageData = await loadUsageData(hours: filterDays[selectedFilterOption]!);
 
                             setState(() {
                               allAppsData = usageData['allAppsData'];
@@ -131,11 +131,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
             CustomAppbar(
               title: 'App Usage in the Last $selectedFilterOption',
-              titleColor: kFourthColor,
+              titleColor: kTextColor(context).withOpacity(0.5),
               backgroundColor: Colors.transparent,
               trailing: IconButton(
                 onPressed: () {
-                  navigatorPush(context, ChartScreen(data: usedAppsData, filterDay: selectedFilterOption!,));
+                  navigatorPush(context, AppUsageChartScreen(data: usedAppsData, filterDay: selectedFilterOption!,));
                 }, 
                 icon: Icon(Icons.timeline_rounded, color: kPrimaryColor, size: 20.sp,),
               ),
@@ -145,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 225.h,
               child: RefreshIndicator.adaptive(
                 onRefresh: () async {
-                  usageData = await loadUsageData(context, hours: filterDays[selectedFilterOption]!);
+                  usageData = await loadUsageData(hours: filterDays[selectedFilterOption]!);
                   setState(() {
                     allAppsData = usageData['allAppsData'];
                     usedAppsData = usageData['usedAppsData'];
@@ -181,8 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Text(
                                   'Time Spent: ',
-                                  style: kSecondaryNormalTextStyle(context).copyWith(
-                                    color: kFourthColor,
+                                  style: kNormalTextStyle(context).copyWith(
                                     fontSize: 12.sp,
                                   ),
                                 ),
@@ -209,9 +208,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               linearGradient: LinearGradient(colors: [kFourthColor, kPrimaryColor]),
                               lineWidth: 2.w,
                               center: Text(
-                              '${app['percentageTimeSpent'].round()}%',
-                              style: kNormalTextStyle(context).copyWith(
-                                fontSize: 10.sp,
+                                app['percentageTimeSpent'].isFinite 
+                                  ? app['percentageTimeSpent'] >= 100 ? '100%' : '${app['percentageTimeSpent'].round()}%'
+                                  : '0%',
+                                style: kNormalTextStyle(context).copyWith(
+                                  fontSize: 10.sp,
                               ),
                             ),
                           ),
@@ -219,10 +220,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     );
                   },
-                ),
+                )
               ),
             ),
-          ]
+          ].animate(
+            interval: kDurationMs(200),
+            effects: MyEffects.fadeSlide()
+          )
         ),
       ),
     );

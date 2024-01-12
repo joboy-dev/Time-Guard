@@ -27,7 +27,7 @@ class AppDataDialog extends StatelessWidget {
             ),
             SizedBox(width: 20.w),
             Text(
-              app.appName.length > 14 ? '${app.appName.substring(0, 13)}...' : app.appName, 
+              app.appName.length > 14 ? '${app.appName.substring(0, 12)}...' : app.appName, 
               style: kSecondaryNormalTextStyle(context).copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp),
             ),
           ],
@@ -38,50 +38,56 @@ class AppDataDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('App Name: ', style: kNormalTextStyle(context).copyWith(color: kFourthColor, fontWeight: FontWeight.bold),),
-            Text(app.appName, style: kSecondaryNormalTextStyle(context),),
+            Text('App Name: ', style: kNormalTextStyle(context).copyWith(fontWeight: FontWeight.bold),),
+            Text(app.appName, style: kSecondaryNormalTextStyle(context), textAlign: TextAlign.left,),
           ],
         ),
 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Package Name: ', style: kNormalTextStyle(context).copyWith(color: kFourthColor, fontWeight: FontWeight.bold),),
-            Text(app.packageName, style: kSecondaryNormalTextStyle(context),),
+            Text('Package Name: ', style: kNormalTextStyle(context).copyWith(fontWeight: FontWeight.bold),),
+            Text(app.packageName, style: kSecondaryNormalTextStyle(context), textAlign: TextAlign.left,),
           ],
         ),
 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Version: ', style: kNormalTextStyle(context).copyWith(color: kFourthColor, fontWeight: FontWeight.bold),),
-            Text(app.versionName, style: kSecondaryNormalTextStyle(context),),
+            Text('Version: ', style: kNormalTextStyle(context).copyWith(fontWeight: FontWeight.bold),),
+            Text(app.versionName, style: kSecondaryNormalTextStyle(context), textAlign: TextAlign.left,),
           ],
         ),
 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Time used on app: ', style: kNormalTextStyle(context).copyWith(color: kFourthColor, fontWeight: FontWeight.bold),),
-            Text(app.timeUsedOnApp, style: kSecondaryNormalTextStyle(context),),
+            Text('Time used on app: ', style: kNormalTextStyle(context).copyWith(fontWeight: FontWeight.bold),),
+            Text(app.timeUsedOnApp, style: kSecondaryNormalTextStyle(context), textAlign: TextAlign.left,),
           ],
         ),
 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Usage Limit: ', style: kNormalTextStyle(context).copyWith(color: kFourthColor, fontWeight: FontWeight.bold),),
-            Text(app.usageLimit, style: kSecondaryNormalTextStyle(context),),
+            Text('Usage Limit: ', style: kNormalTextStyle(context).copyWith(fontWeight: FontWeight.bold),),
+            Text(app.usageLimit, style: kSecondaryNormalTextStyle(context), textAlign: TextAlign.left,),
           ],
         ),
 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Tracked Status: ', style: kNormalTextStyle(context).copyWith(color: kFourthColor, fontWeight: FontWeight.bold),),
+            Text('Tracked Status: ', style: kNormalTextStyle(context).copyWith(fontWeight: FontWeight.bold),),
             Text(
               app.isTracked ? 'Currently tracked' : 'Not currently tracked', 
               style: kSecondaryNormalTextStyle(context),
+              textAlign: TextAlign.left,
             ),
           ],
         ),

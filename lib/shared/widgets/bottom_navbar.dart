@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,11 +56,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
   List<CustomAppbar> _appbars() => [
     CustomAppbar(
       title: 'Home', 
-      trailing: IconButton(
-        onPressed: () {
-          navigatorPush(context, const RecordsScreen());
-        }, 
-        icon: Icon(Icons.bar_chart, color: kFourthColor, size: 30.sp,),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            onPressed: () {
+              navigatorPush(context, const RecordsScreen());
+            }, 
+            icon: Icon(Icons.bar_chart, color: kFourthColor, size: 30.sp,),
+          ),
+        ],
       ),
     ),
     const CustomAppbar(

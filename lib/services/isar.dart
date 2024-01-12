@@ -7,10 +7,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:time_guard/models/app_model.dart';
 import 'package:time_guard/models/records_model.dart';
+import 'package:time_guard/services/notification.dart';
 import 'package:time_guard/services/provider/app_provider.dart';
 import 'package:time_guard/services/provider/record_provider.dart';
 import 'package:time_guard/shared/utils/logger.dart';
 import 'package:time_guard/services/usage_stats.dart';
+import 'package:time_guard/shared/widgets/snackbar.dart';
 
 class IsarDB {
    late Future<Isar> db;
@@ -86,6 +88,8 @@ class IsarDB {
     for (App app in allApps) {
       context.read<AppProvider>().addAllApps(app);
     }
+
+    return allApps;
   }
 
   /// Function to get and add tracked apps in provider
@@ -119,6 +123,19 @@ class IsarDB {
     final isar = await db;
 
     final app = await isar.txn(() => isar.apps.where().filter().packageNameEqualTo(packageName).findFirst());
+
+    if (app != null) {
+      return app;
+    } else {
+      return null;
+    }
+  }
+
+  ///Function to get app by time
+  Future<App?> getAppByTime(int time) async {
+    final isar = await db;
+
+    final app = await isar.txn(() => isar.apps.where().filter().timeUsedOnAppInSecondsEqualTo(time).findFirst());
 
     if (app != null) {
       return app;
@@ -206,6 +223,161 @@ class IsarDB {
   }
 
 
+  // -------------------- RECORD SCHEMA --------------------------
+  
+  /// Function to add records to isar db
+  Future addRecord(BuildContext context) async {
+    final isar = await db;
+
+    Map usageData = await loadUsageData();
+    List usedAppsData = usageData['usedAppsData'];
+    final currentDate = DateTime.now();
+    int mostTime = 0;
+
+    // Get all apps
+    final allApps = await getAllApps(context);
+
+    // Loop through the list of all apps to get the most time used on an app
+    for (App app in allApps) {
+      if (app.timeUsedOnAppInSeconds > mostTime) {
+        mostTime = app.timeUsedOnAppInSeconds;
+      }
+    }
+    logger(mostTime);
+
+    // Get most used app by time used
+    final mostUsedApp = await getAppByTime(mostTime);
+    if (mostUsedApp != null) {
+      logger(mostUsedApp.appName);
+    }
+
+    bool recordAvailable = await recordExists();
+
+    if (recordAvailable) {
+      showSnackbar(context, 'There is a record available for today');
+    } else {  
+      // Add record to database
+      final record = Record(
+        date: '${currentDate.day}.${currentDate.month}.${currentDate.year}', 
+        noOfAppsUsed: usedAppsData.length, 
+        mostUsedApp: mostUsedApp!.appName, 
+        timeForMostUsedApp: mostUsedApp.timeUsedOnApp, 
+        timeForMostUsedAppInSeconds: mostUsedApp.timeUsedOnAppInSeconds,
+        overallScreenTime: usageData['overallScreenTimeInSeconds'],
+        overallScreenTimeRefined: '${usageData['totalHours']}h ${usageData['totalMinutes']}m'
+      );
+
+      isar.writeTxnSync(() => isar.records.putSync(record));
+
+      // Add to provider
+      context.read<RecordProvider>().addRecord(record);
+      showSnackbar(context, 'Record data saved for today');
+    }
+  }
+
+
+  /// Function to get all records from database
+  Future getRecords(BuildContext context) async {
+    final isar = await db;
+
+    final records = await isar.txn(() => isar.records.where(sort: Sort.desc).findAll());
+
+    // logger(record);
+    context.read<RecordProvider>().clear();
+
+    for (Record record in records) {
+      context.read<RecordProvider>().addRecord(record);
+    }
+
+    return records;
+  }
+
+
+  /// Function to delete a record fro isar db
+  Future deleteRecord(BuildContext context, int id) async {
+    final isar = await db;
+
+    await isar.writeTxn(() => isar.records.where().filter().idEqualTo(id).deleteAll());
+
+    await getRecords(context);
+  }
+
+
+  /// Function to check if a record exists in the database
+  Future recordExists() async {
+    final isar = await db;
+    final currentDate = DateTime.now();
+
+    final records = await isar.txn(() => isar.records.where().findAll());
+
+    if (records.isEmpty) {
+      return false;
+    } else {
+      for (Record record in records) {
+        String date = record.date;
+        List splitDate = date.split('.');
+        logger(splitDate);
+
+        if (currentDate.day == int.parse(splitDate[0]) && currentDate.month == int.parse(splitDate[1]) && currentDate.year == int.parse(splitDate[2])) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+  }
+
+
+  Future addRecordIsarAlone() async {
+    final isar = await db;
+
+    Map usageData = await loadUsageData();
+    List usedAppsData = usageData['usedAppsData'];
+    final currentDate = DateTime.now();
+    int mostTime = 0;
+
+    // Get all apps
+    final allApps = await isar.txn(() => isar.apps.where().findAll());
+
+    // Loop through the list of all apps to get the most time used on an app
+    for (App app in allApps) {
+      if (app.timeUsedOnAppInSeconds > mostTime) {
+        mostTime = app.timeUsedOnAppInSeconds;
+      }
+    }
+    logger(mostTime);
+
+    // Get most used app by time used
+    final mostUsedApp = await getAppByTime(mostTime);
+    if (mostUsedApp != null) {
+      logger(mostUsedApp.appName);
+    }
+
+    bool recordAvailable = await recordExists();
+
+    if (recordAvailable) {
+      logger('Record available for today');
+    } else {  
+      // Add record to database
+      final record = Record(
+        date: '${currentDate.day}.${currentDate.month}.${currentDate.year}', 
+        noOfAppsUsed: usedAppsData.length, 
+        mostUsedApp: mostUsedApp!.appName, 
+        timeForMostUsedApp: mostUsedApp.timeUsedOnApp, 
+        timeForMostUsedAppInSeconds: mostUsedApp.timeUsedOnAppInSeconds,
+        overallScreenTime: usageData['overallScreenTimeInSeconds'],
+        overallScreenTimeRefined: '${usageData['totalHours']}h ${usageData['totalMinutes']}m'
+      );
+
+      isar.writeTxnSync(() => isar.records.putSync(record));
+
+      await Notifications.showNotification(title: 'Record added', body: 'Screen time record for today added.');
+    }
+  }
+
+
+
+ 
   /// Function to reload data
   Future reloadData(BuildContext context) async {
     // Remove all apps and records from provider
@@ -215,31 +387,6 @@ class IsarDB {
     await getAllApps(context);
     await getAllTrackedApps(context);
     await getAllUntrackedApps(context);
+    await getRecords(context);
   }
-
-
-  // -------------------- RECORD SCHEMA --------------------------
-  
-  /// Function to add all installed apps to isar db and provider
-  Future addRecord(BuildContext context) async {
-    final isar = await db;
-
-    Map usageData = await loadUsageData(context);
-    List usedAppsData = usageData['usedAppsData'];
-    final currentDate = DateTime.now();
-    Record? record;
-
-    if (currentDate.hour >= 0 && currentDate.hour <= 3) {
-      record = Record(
-        date: '${currentDate.day}.${currentDate.month}.${currentDate.year}', 
-        noOfAppsUsed: usedAppsData.length, 
-        mostUsedApp: 'mostUsedApp', 
-        timeForMostUsedApp: 'timeForMostUsedApp', 
-        timeForMostUsedAppInSeconds: 1,
-      );
-    }
-
-    isar.writeTxnSync(() => isar.records.putSync(record!));
-  }  
-
 }

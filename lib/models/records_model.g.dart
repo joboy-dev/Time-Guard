@@ -32,13 +32,23 @@ const RecordSchema = CollectionSchema(
       name: r'noOfAppsUsed',
       type: IsarType.long,
     ),
-    r'timeForMostUsedApp': PropertySchema(
+    r'overallScreenTime': PropertySchema(
       id: 3,
+      name: r'overallScreenTime',
+      type: IsarType.long,
+    ),
+    r'overallScreenTimeRefined': PropertySchema(
+      id: 4,
+      name: r'overallScreenTimeRefined',
+      type: IsarType.string,
+    ),
+    r'timeForMostUsedApp': PropertySchema(
+      id: 5,
       name: r'timeForMostUsedApp',
       type: IsarType.string,
     ),
     r'timeForMostUsedAppInSeconds': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'timeForMostUsedAppInSeconds',
       type: IsarType.long,
     )
@@ -65,6 +75,7 @@ int _recordEstimateSize(
   var bytesCount = offsets.last;
   bytesCount += 3 + object.date.length * 3;
   bytesCount += 3 + object.mostUsedApp.length * 3;
+  bytesCount += 3 + object.overallScreenTimeRefined.length * 3;
   bytesCount += 3 + object.timeForMostUsedApp.length * 3;
   return bytesCount;
 }
@@ -78,8 +89,10 @@ void _recordSerialize(
   writer.writeString(offsets[0], object.date);
   writer.writeString(offsets[1], object.mostUsedApp);
   writer.writeLong(offsets[2], object.noOfAppsUsed);
-  writer.writeString(offsets[3], object.timeForMostUsedApp);
-  writer.writeLong(offsets[4], object.timeForMostUsedAppInSeconds);
+  writer.writeLong(offsets[3], object.overallScreenTime);
+  writer.writeString(offsets[4], object.overallScreenTimeRefined);
+  writer.writeString(offsets[5], object.timeForMostUsedApp);
+  writer.writeLong(offsets[6], object.timeForMostUsedAppInSeconds);
 }
 
 Record _recordDeserialize(
@@ -92,8 +105,10 @@ Record _recordDeserialize(
     date: reader.readString(offsets[0]),
     mostUsedApp: reader.readString(offsets[1]),
     noOfAppsUsed: reader.readLong(offsets[2]),
-    timeForMostUsedApp: reader.readString(offsets[3]),
-    timeForMostUsedAppInSeconds: reader.readLong(offsets[4]),
+    overallScreenTime: reader.readLong(offsets[3]),
+    overallScreenTimeRefined: reader.readString(offsets[4]),
+    timeForMostUsedApp: reader.readString(offsets[5]),
+    timeForMostUsedAppInSeconds: reader.readLong(offsets[6]),
   );
   object.id = id;
   return object;
@@ -113,8 +128,12 @@ P _recordDeserializeProp<P>(
     case 2:
       return (reader.readLong(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readString(offset)) as P;
+    case 6:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -573,6 +592,198 @@ extension RecordQueryFilter on QueryBuilder<Record, Record, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Record, Record, QAfterFilterCondition> overallScreenTimeEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'overallScreenTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'overallScreenTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition> overallScreenTimeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'overallScreenTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition> overallScreenTimeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'overallScreenTime',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeRefinedEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'overallScreenTimeRefined',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeRefinedGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'overallScreenTimeRefined',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeRefinedLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'overallScreenTimeRefined',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeRefinedBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'overallScreenTimeRefined',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeRefinedStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'overallScreenTimeRefined',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeRefinedEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'overallScreenTimeRefined',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeRefinedContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'overallScreenTimeRefined',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeRefinedMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'overallScreenTimeRefined',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeRefinedIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'overallScreenTimeRefined',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterFilterCondition>
+      overallScreenTimeRefinedIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'overallScreenTimeRefined',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Record, Record, QAfterFilterCondition> timeForMostUsedAppEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -806,6 +1017,31 @@ extension RecordQuerySortBy on QueryBuilder<Record, Record, QSortBy> {
     });
   }
 
+  QueryBuilder<Record, Record, QAfterSortBy> sortByOverallScreenTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'overallScreenTime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterSortBy> sortByOverallScreenTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'overallScreenTime', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterSortBy> sortByOverallScreenTimeRefined() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'overallScreenTimeRefined', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterSortBy>
+      sortByOverallScreenTimeRefinedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'overallScreenTimeRefined', Sort.desc);
+    });
+  }
+
   QueryBuilder<Record, Record, QAfterSortBy> sortByTimeForMostUsedApp() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'timeForMostUsedApp', Sort.asc);
@@ -882,6 +1118,31 @@ extension RecordQuerySortThenBy on QueryBuilder<Record, Record, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Record, Record, QAfterSortBy> thenByOverallScreenTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'overallScreenTime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterSortBy> thenByOverallScreenTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'overallScreenTime', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterSortBy> thenByOverallScreenTimeRefined() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'overallScreenTimeRefined', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Record, Record, QAfterSortBy>
+      thenByOverallScreenTimeRefinedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'overallScreenTimeRefined', Sort.desc);
+    });
+  }
+
   QueryBuilder<Record, Record, QAfterSortBy> thenByTimeForMostUsedApp() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'timeForMostUsedApp', Sort.asc);
@@ -930,6 +1191,20 @@ extension RecordQueryWhereDistinct on QueryBuilder<Record, Record, QDistinct> {
     });
   }
 
+  QueryBuilder<Record, Record, QDistinct> distinctByOverallScreenTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'overallScreenTime');
+    });
+  }
+
+  QueryBuilder<Record, Record, QDistinct> distinctByOverallScreenTimeRefined(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'overallScreenTimeRefined',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Record, Record, QDistinct> distinctByTimeForMostUsedApp(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -968,6 +1243,19 @@ extension RecordQueryProperty on QueryBuilder<Record, Record, QQueryProperty> {
   QueryBuilder<Record, int, QQueryOperations> noOfAppsUsedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'noOfAppsUsed');
+    });
+  }
+
+  QueryBuilder<Record, int, QQueryOperations> overallScreenTimeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'overallScreenTime');
+    });
+  }
+
+  QueryBuilder<Record, String, QQueryOperations>
+      overallScreenTimeRefinedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'overallScreenTimeRefined');
     });
   }
 

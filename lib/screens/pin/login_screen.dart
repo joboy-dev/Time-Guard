@@ -5,10 +5,10 @@ import 'package:pin_plus_keyboard/package/controllers/pin_input_controller.dart'
 import 'package:provider/provider.dart';
 import 'package:time_guard/screens/dialog/reset_pin_dialog.dart';
 import 'package:time_guard/screens/pin/base_pin_screen.dart';
-import 'package:time_guard/screens/pin/load_data_screen.dart';
 import 'package:time_guard/services/isar.dart';
 import 'package:time_guard/services/provider/pin_store.dart';
 import 'package:time_guard/shared/utils/navigator.dart';
+import 'package:time_guard/shared/widgets/bottom_navbar.dart';
 import 'package:time_guard/shared/widgets/button.dart';
 import 'package:time_guard/shared/widgets/dialog.dart';
 import 'package:time_guard/shared/widgets/snackbar.dart';
@@ -36,8 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         await isarDb.reloadData(context);
 
-        // Navigatr to home page
-        navigatorPushReplacement(context, const LoadDataScreen());
+        // Navigate to home page
+        navigatorPushReplacement(context, const BottomNavBar());
         showSnackbar(context, 'Pin is correct.');
       }
 

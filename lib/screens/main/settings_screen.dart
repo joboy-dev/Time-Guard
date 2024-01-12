@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:time_guard/screens/applications/all_apps_screen.dart';
 import 'package:time_guard/screens/applications/tracked_apps_screen.dart';
@@ -7,8 +8,10 @@ import 'package:time_guard/screens/applications/usage_limit_screen.dart';
 import 'package:time_guard/screens/base_screen.dart';
 import 'package:time_guard/screens/dialog/clear_data_dialog.dart';
 import 'package:time_guard/screens/dialog/select_theme_dialog.dart';
+import 'package:time_guard/screens/main/feedback_form_screen.dart';
 import 'package:time_guard/screens/pin/change/verify_pin.dart';
 import 'package:time_guard/shared/constants.dart';
+import 'package:time_guard/shared/utils/animations.dart';
 import 'package:time_guard/shared/utils/navigator.dart';
 import 'package:time_guard/shared/widgets/button.dart';
 import 'package:time_guard/shared/widgets/dialog.dart';
@@ -21,6 +24,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
@@ -94,6 +98,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
 
           SettingsSection(
+            sectionName: 'Feedback',
+            settingOptions: [
+              IconTextButton(
+                text: 'Send Feedback',
+                fontSize: 15.sp,
+                onPressed: () {
+                  navigatorPush(context, const FeedbackFromScreen());
+                }
+              ),
+            ],
+          ),
+
+          SettingsSection(
             sectionName: 'Data',
             settingOptions: [
               IconTextButton(
@@ -106,8 +123,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-
-        ],
+        ].animate(
+          interval: kDurationMs(200),
+          effects: MyEffects.fadeSlide()
+        ),
       ),
     );
   }

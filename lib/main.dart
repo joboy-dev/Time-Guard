@@ -1,11 +1,10 @@
-import 'package:background_fetch/background_fetch.dart';
 import 'package:device_preview/device_preview.dart';
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:workmanager/workmanager.dart';
 import 'package:provider/provider.dart';
 import 'package:time_guard/models/app_model.dart';
 import 'package:time_guard/screens/onboarding/splash_screen.dart';
@@ -21,10 +20,8 @@ import 'package:time_guard/shared/utils/logger.dart';
 // Initialize notifications plugin
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-void backgroundFetchHeadlessTask(HeadlessTask task, BuildContext context) async {
-  var taskId = task.taskId;
-  logger(taskId);
-
+// Set up function to send usage limit nofitications
+Future<bool> usageLimitNotifications(String task, Map<String, dynamic> inputData, BuildContext context) async {
   final trackedApps = context.read<AppProvider>().trackedApps;
 
   // Tracked Apps
@@ -44,15 +41,24 @@ void backgroundFetchHeadlessTask(HeadlessTask task, BuildContext context) async 
       );
     }
   }
+
+  return Future.value(true);
 }
 
-void addRecord() async {
+// Set up function to add records
+Future<bool> addRecord(String task, Map<String, dynamic> inputData) async {
   logger('Start');
   await IsarDB().addRecordIsarAlone();
   logger('Done');
+  return Future.value(true);
 }
 
-
+void callbackDispatcher() {
+  Workmanager().executeTask((taskName, inputData) {
+    logger('Task executing $taskName');
+    return Future.value(true);
+  });
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,9 +68,8 @@ void main() async {
   flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
     AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
 
-  await AndroidAlarmManager.initialize();
   await Notifications.init();
-  await BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+  Workmanager().initialize(callbackDispatcher);
 
   runApp(
     MultiProvider(
@@ -82,19 +87,22 @@ void main() async {
     )
   );
 
-  await AndroidAlarmManager.periodic(
-    const Duration(hours: 24), 
-    17, 
-    addRecord,
-    allowWhileIdle: true,
-    wakeup: true,
-  );
-
 }
 
-class TimeGuard extends StatelessWidget {
+class TimeGuard extends StatefulWidget {
   const TimeGuard({super.key});
 
+  @override
+  State<TimeGuard> createState() => _TimeGuardState();
+}
+
+class _TimeGuardState extends State<TimeGuard> {
+  @override
+  void initState() {
+    super.initState();
+    Workmanager().registerPeriodicTask('task1', 'addRecord', frequency: const Duration(days: 1),);
+    Workmanager().registerPeriodicTask('task2', 'usageLimitNotifications', frequency: const Duration(minutes: 15),);
+  }
 
   @override
   Widget build(BuildContext context) {

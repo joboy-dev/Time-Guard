@@ -10,7 +10,7 @@ class EmailService {
   /// Function to send email
   sendMail(BuildContext context, String name, String email, String feedback) async {
     String username = 'devjoboy@gmail.com';
-    String password = 'jdeasnpdzvzwjqqw';
+    String password = 'wjjcdzoqptoyaqwo';
 
     final smtpServer = gmail(username, password);
 

@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -12,6 +12,7 @@ import 'package:time_guard/services/provider/record_provider.dart';
 import 'package:time_guard/models/records_model.dart';
 import 'package:time_guard/shared/constants.dart';
 import 'package:time_guard/shared/utils/animations.dart';
+import 'package:time_guard/shared/utils/logger.dart';
 // import 'package:time_guard/shared/utils/logger.dart';
 import 'package:time_guard/shared/widgets/custom_appbar.dart';
 import 'package:time_guard/shared/widgets/dialog.dart';
@@ -46,11 +47,20 @@ class _RecordsScreenState extends State<RecordsScreen> {
       }
 
       setState(() {
-        averageTime = totalTime /sevenDayRecord.length;
-        int averageHours = (averageTime.round() / 60) ~/ 60;
-        int averageMins = ((averageTime.round() / 60) % 60).round();
+        try {
+          averageTime = totalTime /sevenDayRecord.length;
+          int averageHours = (averageTime.round() / 60) ~/ 60;
+          int averageMins = ((averageTime.round() / 60) % 60).round();
 
-        averageTimeRefined = '${averageHours}h ${averageMins}m';
+          averageTimeRefined = '${averageHours}h ${averageMins}m';
+        } catch (e) {
+          logger(e);
+          averageTime = totalTime /sevenDayRecord.length;
+          int averageHours = 0;
+          int averageMins = 0;
+
+          averageTimeRefined = 'No data available';
+        }
       });
     });
     super.initState();
